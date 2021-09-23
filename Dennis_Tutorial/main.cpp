@@ -13,9 +13,8 @@ void Print(Args...args)
 }
 
 // function that return double and take on double argument
-double SecantMethod(double (*)(double, double, double), double, double, double);
-double SecantMethod(double (*)(double, double, double), double);
-double quantumProblem(double x, double y, double z)
+double SecantMethod(double (*)(double),double);
+double quantumProblem(double x)
 {
     return 1.0 / tan(x) - x;
 }

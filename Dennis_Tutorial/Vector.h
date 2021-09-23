@@ -23,16 +23,18 @@ public:
     // copy assignment operator
     Vector& operator=(const Vector& vec);
     // move assignment operator
-    Vector& operator=(Vector&& vec);
+    Vector& operator=(Vector&& vec) noexcept;
 
     // to access memory as with usual array, but container is of pointer type
     double  At(size_t i);
     // increase size by one, and fill with val
-    double  PushBack(double val);
+    void  PushBack(double val);
     // change vector size to n, which must be greater than current size; 
     void    Resize(size_t n);
     // return size of vector, not reserved
-    size_t  Size();
+    size_t  Size() const;
+    // return the underlying pointer to data
+    double* Data();
     // delete memory allocation, and set size to zero
     void    Clear();
     // sets instance back to default, without deleting data (for move semantics)
