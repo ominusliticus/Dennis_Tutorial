@@ -2,8 +2,10 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <cstring>
 
 #include "header.h"
+#include "Vector.h"
 
 template<class...Args>
 void Print(Args...args)
@@ -12,63 +14,31 @@ void Print(Args...args)
     std::cout << '\n';
 }
 
-// function that return double and take on double argument
-double SecantMethod(double (*)(double),double);
-double quantumProblem(double x)
-{
-    return 1.0 / tan(x) - x;
-}
 
 int main()
 {
-    int age;
-    bool keep_running = false;
-    while (keep_running)
+    Vector vec(10);
+    Print(vec.Size());
+    vec.Resize(20);
+    Print(vec.Size());
+
+    double ix = 0.0;
+    for (int i = 0; i < 20; i++)
     {
-        Print("Please enter you age:");
-        std::cin >> age;
-        if (age < 0)
-            break;
-
-        if (age >= 21)
-        {
-            if (age == 21)
-                Print("I bet you drank before this.");
-
-            Print("You can vote and drink!");
-        }
-        else if (age >= 18)
-        {
-            Print("You can vote!");
-        }
-        else
-        {
-            Print("You're a baby...");
-        }
-
+        vec[i] = ix;
+        ix += 1.0 / 20.0;
     }
 
-    Print("First energy level is:", SecantMethod(quantumProblem, 1.2));
+    Vector vec2;
+    for (int i = 0; i < 3; i++)
+        vec2.PushBack((double)i);
+    
+    for (int i = 0; i < 3; i++) Print(vec2[i]);
+    
+    Vector vec3(vec);
+    for (int i = 0; i < (int)vec.Size(); i++) Print(vec[i]);
+    for (int i = 0; i < (int)vec3.Size(); i++) Print(vec3[i]);
+    Print(vec3.Size());
 
     return 0;
-}
-
-double SecantMethod(double (*func)(double), double x0)
-{
-    double tol = 1e-6;
-    double x1, x2;
-
-    x1 = 1.1 * x0;
-
-    double err = 1e10;
-    while (err > tol)
-    {
-        x2 = x1 - func(x1) * (x1 - x0) / (func(x1) - func(x0));
-        x0 = x1;
-        x1 = x2;
-
-        err = fabs((x2 - x1) / x2);
-    }
-
-    return x2;
 }

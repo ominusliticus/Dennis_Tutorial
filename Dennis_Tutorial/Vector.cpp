@@ -1,6 +1,12 @@
 #include "Vector.h"
 
-// No definition for Vector(), we will let compiler take care of that
+#include <cstring>
+
+Vector::Vector()
+    : m_size{ 0 }, m_reserved{ 3 }
+{
+    m_data = new double[m_reserved];
+}
 
 Vector::Vector(size_t n) 
     : m_size{ n }, m_reserved{ n + 3 }  // Initializer list
@@ -12,14 +18,16 @@ Vector::Vector(double* array, size_t n)
     : m_size{ n }, m_reserved{ n + 3 }
 {
     m_data = new double[n + 3];
-    memcpy((void*)m_data, (const void*)array, n);
+    memcpy(m_data, array, n);
 }
 
 Vector::Vector(const Vector& vec)
 {
+    Orphan();
     m_size      = vec.m_size;
     m_reserved  = vec.m_reserved;
-    memcpy((void*)m_data, (const void*)vec.m_data, m_size);
+    m_data      = new double[m_reserved];
+    std::memcpy(m_data, vec.m_data, m_size * sizeof(double));
 }
 
 Vector::~Vector()
@@ -27,7 +35,7 @@ Vector::~Vector()
     Clear();
 }
 
-double Vector::operator[](size_t i)
+double& Vector::operator[](size_t i)
 {
     // Error bounds checking not done
     return m_data[i];
@@ -35,9 +43,10 @@ double Vector::operator[](size_t i)
 
 Vector& Vector::operator=(const Vector& vec)
 {
-    m_size        = vec.m_size;
-    m_reserved    = vec.m_reserved;
-    memcpy((void*)m_data, (const void*)vec.m_data, m_size);
+    m_size      = vec.m_size;
+    m_reserved  = vec.m_reserved;
+    m_data      = new double[m_reserved];
+    std::memcpy(m_data, vec.m_data, m_size * sizeof(double));
     return *this;
 }
 
@@ -61,7 +70,8 @@ void Vector::PushBack(double val)
 {
     if (m_size + 1 < m_reserved)
     {
-        m_data[m_size] = val;
+        size_t i = 3 - (m_reserved - m_size);
+        m_data[i] = val;
         m_size++;
     }
     else
@@ -69,11 +79,13 @@ void Vector::PushBack(double val)
         // Allocate new array
         double* temp = new double[m_reserved + 3];
         // Copy existing data
-        memcpy((void*)temp, (const void*)m_data, m_reserved);
+        memcpy(temp, m_data, m_reserved * sizeof(double));
         // Free old data
         delete[] m_data;
         // Assign pointer to new data;
         m_data = temp;
+        // Add new value to vector
+        temp[m_reserved] = val;
         // Avoid memory leak
         temp = nullptr;
 
@@ -87,7 +99,7 @@ void Vector::Resize(size_t n)
 {
     // Check PushBack for more details
     double* temp = new double[n + 3];
-    memcpy((void*)temp, (const void*)m_data, m_reserved);
+    memcpy(temp, m_data, m_reserved * sizeof(double));
     delete[] m_data;
     m_data = temp;
     temp = nullptr;
