@@ -40,5 +40,10 @@ int main()
     for (int i = 0; i < (int)vec3.Size(); i++) Print(vec3[i]);
     Print(vec3.Size());
 
+    for (auto v : vec3)
+    {
+
+    }
+
     return 0;
 }

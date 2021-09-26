@@ -4,11 +4,46 @@
 #include <iostream>
 
 // TODO: Add iterator class to Vector
+// Will go ahead and implement here so that refactoring is easier
+// when I switch everything to templates
+class VectorIterator
+{
+public:
+    // TODO: add iterator flags
+
+    // Default constructor
+    VectorIterator() = default;
+    // Constructor that takes a pointer
+    VectorIterator(double* ptr) : m_ptr{ ptr } {};
+        
+    // Allow for dereferencing
+    double& operator*()     { return *m_ptr; };
+    // Allow for pointer access
+    double* operator->()    { return m_ptr; };
+
+    // Increment pointer, return iterator at new address
+    VectorIterator&   operator++()    { m_ptr++; return *this; };
+    // Decrement pointer, return iterator at new address
+    VectorIterator&   operator--()    { m_ptr--; return *this; };
+    // Increment pointer, returns value stored at previous adress
+    VectorIterator    operator++(int) { VectorIterator temp = *this; ++(*this); return temp; };
+    // Decrement pointer, returns value stored at previous address
+    VectorIterator    operator--(int) { VectorIterator temp = *this; --(*this); return temp; };
+        
+    // These are pretty explanatory
+    friend bool operator==(const VectorIterator& a, const VectorIterator& b) { return a.m_ptr == b.m_ptr; };
+    friend bool operator!=(const VectorIterator& a, const VectorIterator& b) { return a.m_ptr != b.m_ptr; };
+
+private:
+    double* m_ptr;
+};
 // TODO: upgrade to templated vector
 
 class Vector
 {
 public:
+    // TODO: add class flags
+
     // default constructor
     Vector();
     // allocate n bits of memory
@@ -42,7 +77,12 @@ public:
     // sets instance back to default, without deleting data (for move semantics)
     void    Orphan();
 
-private:
+
+    // Need to be lower-case so that range-based loop API can identify
+    VectorIterator begin()  { return &m_data[0]; }
+    VectorIterator end()    { return &m_data[m_size]; };
+
+protected:
     double* m_data = nullptr;
     size_t  m_size;
     size_t  m_reserved;
